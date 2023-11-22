@@ -11,7 +11,16 @@ fn get_words(string: &String) -> Vec<String> {
         }
     }
 
-    return all_words;
+    all_words
+}
+
+fn get_words_fm(string: &String) -> Vec<String> {
+    let words: Vec<String> = string.split("\n")
+        .flat_map(|l|l.split(" "))
+        .map(|w|w.to_string())
+        .collect();
+
+    words
 }
 
 fn main() {
@@ -20,4 +29,8 @@ fn main() {
     let words = get_words(&contents);
 
     println!("{:?}", words);
+
+    let words_fm = get_words_fm(&contents);
+
+    println!("{:?}", words_fm);
 }
