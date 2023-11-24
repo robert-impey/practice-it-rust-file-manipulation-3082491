@@ -1,3 +1,12 @@
+use std::fs;
+
+fn write_words_to_file(path: &str, words: &Vec<String>) -> Result<(), std::io::Error> {
+    let all_words = words.join(" ");
+
+    fs::write(path, all_words)?;
+    Ok(())
+}
+
 fn main() {
     let file_path = "words_to_file";
     let words = vec![
@@ -9,5 +18,5 @@ fn main() {
     ];
 
     // Implement the write_words_to_file function
-    //write_words_to_file(&file_path, &words).unwrap();
+    write_words_to_file(&file_path, &words).unwrap();
 }
