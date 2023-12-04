@@ -17,6 +17,5 @@ fn main() {
         "line".to_string(),
     ];
 
-    // Implement the write_words_to_file function
     write_words_to_file(&file_path, &words).unwrap();
 }
