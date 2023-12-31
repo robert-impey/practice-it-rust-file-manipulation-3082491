@@ -2,6 +2,7 @@ use std::collections::{BTreeMap, HashMap};
 use std::fs;
 use std::io::{self, BufRead};
 use std::fs::File;
+use std::io::prelude::*;
 
 fn get_words(text: &String) -> Vec<String> {
     text.split_whitespace().map(|w| w.to_string()).collect()
@@ -42,13 +43,6 @@ fn replace_x_with_y_in_place(words: Vec<String>, replacement_map: &HashMap<Strin
     updated_words
 }
 
-fn write_words_to_file(path: &str, words: &Vec<String>) -> Result<(), io::Error> {
-    let all_words = words.join(" ");
-
-    fs::write(path, all_words)?;
-    Ok(())
-}
-
 fn main() {
     let wanted_string = "alice";
 
@@ -57,10 +51,12 @@ fn main() {
     let reader = io::BufReader::new(file);
 
     let mut alice_line_count = 0;
-
+    let mut lines: Vec<String> = Vec::new();
     for line in reader.lines() {
-        let unwrapped = line.unwrap().to_lowercase();
-        if unwrapped.contains(wanted_string) {
+        let unwrapped = line.unwrap();
+        lines.push(unwrapped.clone());
+
+        if unwrapped.to_lowercase().contains(wanted_string) {
             alice_line_count += 1;
         }
     }
@@ -106,11 +102,21 @@ fn main() {
         ("Alice;".to_string(), "Robert;".to_string()),
     ]);
 
-    let new_words = replace_x_with_y_in_place(words.clone(), &replacement_map);
-
-    println!("{:?}", new_words);
-
     let updated_file_path = "robert_chapter_1";
 
-    write_words_to_file(&updated_file_path, &new_words).unwrap();
+    let mut writer = File::create(updated_file_path).unwrap();
+
+    for line in lines {
+        let new_words = replace_x_with_y_in_place(
+            line.split_whitespace().map(|w| w.to_string()).collect(),
+            &replacement_map);
+
+        println!("{:?}", new_words);
+
+        let all_words = new_words.join(" ");
+
+        writer.write_all(all_words.as_bytes()).unwrap();
+
+        writer.write_all("\n".as_bytes()).unwrap();
+    }
 }
