@@ -76,14 +76,28 @@ fn main() {
 
     println!("The wanted string {} occurs {} times", wanted_string, counter.get(wanted_string).unwrap());
 
-    let mut counter_b : BTreeMap<u32, String> = BTreeMap::new();
+    let mut counter_b: BTreeMap<u32, Vec<String>> = BTreeMap::new();
 
-    for (k, v) in counter {
-        counter_b.insert(v, k);
+    let mut word_count_b = 0;
+
+    for (k,v) in counter {
+        let words_of_count = counter_b.get(&v);
+
+        let mut words = match words_of_count {
+            Some(ws) => ws.to_vec(),
+            None => vec![],
+        };
+
+        words.push(k);
+
+        word_count_b += v;
+        counter_b.insert(v, words);
     }
 
-    for (k, v) in counter_b {
-        println!("{} occurs {} times", v, k);
+    println!("Word count from grouping phase {}", word_count_b);
+
+    for (k,v) in counter_b {
+        println!("The {} word(s) that occur(s) {} times: {}",  v.len(), k, v.join(", "));
     }
 
     let replacement_map = HashMap::from([
